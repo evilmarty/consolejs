@@ -2,34 +2,51 @@ console.js
 ==========
 A javascript console for where you need one.
 
+<div id="console"></div>
+<link rel="stylesheet" type="text/css" href="https://raw.github.com/evilmarty/consolejs/master/console.css">
+<script src="https://raw.github.com/evilmarty/consolejs/master/console.min.js"></script>
+<script type="text/javascript">
+Console('console');
+</script>
+
 Usage
 -----
 To create a new console just pass in the element to be the container, or the id of the element.
+
 ```javascript
 var console = new Console('elementId');
 ```
+
 You can _optionally_ pass in the scope of the console as the second argument. Defaults to *window*.
+
 ```javascript
 var scope = {}; // scope of the console
 var console = new Console('elementId', scope);
 ```
-If a console has already been instantiated for an element and you want to get a reference to it, you can just call ```Console``` with the element to return a reference. The second argument changes the scope for the console. *Note* if the element does not contain a console a new console will be instantiated.</p>
+
+If a console has already been instantiated for an element and you want to get a reference to it, you can just call ```Console``` with the element to return a reference. The second argument changes the scope for the console. *Note* if the element does not contain a console a new console will be instantiated.
+
 ```javascript
 new Console('elementId');
-var console = Console('elementId');```
+var console = Console('elementId');
+```
 
 Commands
 --------
 #### log(object_, ..._)
 > Display the object/s in the console.
+
 #### info(object_, ..._)
 > Same as *log* but logs it under _info_.
+
 #### warn(object_, ..._)
 > Same as *log* but logs it under _warn_.
+
 #### error(object_, ..._)
 > Same as *log* but logs it under _error_.
+
 ### clear()
-Clears the output of the console.
+> Clears the output of the console.
 
 Download / Fork
 ---------------
@@ -38,10 +55,13 @@ Visit the [GitHub repository](http://github.com/evilmarty/consolejs) to download
 Installation
 ------------
 *console.js* has no dependencies, so simply include the javascript file in your html:
+
 ```html
-<script type="text/javascript" src="console.js"></script>
+ <script type="text/javascript" src="console.js"></script>
 ```
+
 And don't forget to include the stylesheet unless you want to provide your own?
+
 ```html
 <link rel="stylesheet" href="console.css" type="text/css" charset="utf-8">
 ```
