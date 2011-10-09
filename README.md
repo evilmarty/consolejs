@@ -2,13 +2,6 @@ console.js
 ==========
 A javascript console for where you need one.
 
-<div id="console"></div>
-<link rel="stylesheet" type="text/css" href="https://raw.github.com/evilmarty/consolejs/master/console.css">
-<script src="https://raw.github.com/evilmarty/consolejs/master/console.min.js"></script>
-<script type="text/javascript">
-Console('console');
-</script>
-
 Usage
 -----
 To create a new console just pass in the element to be the container, or the id of the element.
