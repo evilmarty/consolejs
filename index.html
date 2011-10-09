@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="charset=utf-8">
+    <title>console.js</title>
+    <link rel="stylesheet" href="console.css" type="text/css" media="screen" charset="utf-8">
+    <style type="text/css">
+    html {
+      background: #e0e8e8;
+      height: 100%;
+    }
+    body {
+      background: #f8f8f8;
+      color: #000;
+      font: 14px/120% Helvetica,Arial,sans-serif;
+      min-height: 100%;
+      margin: 0 auto;
+      padding: 10px;
+      width: 600px;
+    }
+    h1::before {
+      color: #39f;
+      content: '>';
+      font-family: Consolas,'Andale Mono','Courier New',Courier,monospace;
+      margin-right: 0.25em;
+    }
+    code {
+      border: 1px solid #eee;
+      padding: 0 3px;
+    }
+    pre {
+      border: 1px solid #eee;
+      padding: 3px;
+    }
+    dl dt {
+      display: block;
+      font-size: 16px;
+      margin: 10px 5px 5px;
+    }
+    dl dd {
+      display: block;
+      margin: 5px 5px 5px 20px;
+    }
+    #console {
+      background: #eee;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      height: 300px;
+      width: 600px;
+      -moz-border-radius: 5px;
+      -webkit-border-radius: 5px;
+    }
+    #console.console {
+      background: #fff;
+    }
+    </style>
+  </head>
+  <body>
+    <h1>console.js</h1>
+    <p>A javascript console for where you need one.</p>
+    <div id="console">console goes here...</div>
+    <h2>Usage</h2>
+    <p>To create a new console just pass in the element to be the container, or the id of the element. </p>
+    <pre>var console = new Console('elementId');</pre>
+    <p>You can <em>optionally</em> pass in the scope of the console as the second argument. Defaults to <strong>window</strong>.</p>
+    <pre>var scope = {}; // scope of the console
+var console = new Console('elementId', scope);</pre>
+    <p>If a console has already been instantiated for an element and you want to get a reference to it, you can just call <code>Console</code> with the element to return a reference. The second argument changes the scope for the console. <strong>Note</strong> if the element does not contain a console a new console will be instantiated.</p>
+    <pre>new Console('elementId');
+var console = Console('elementId');</pre>
+    <h2>Commands</h2>
+    <dl>
+      <dt>log(object<em>, ...</em>)</dt>
+      <dd>Display the object/s in the console.</dd>
+      <dt>info(object<em>, ...</em>)</dt>
+      <dd>Same as <strong>log</strong> but logs it under <em>info</em>.</dd>
+      <dt>warn(object<em>, ...</em>)</dt>
+      <dd>Same as <strong>log</strong> but logs it under <em>warn</em>.</dd>
+      <dt>error(object<em>, ...</em>)</dt>
+      <dd>Same as <strong>log</strong> but logs it under <em>error</em>.</dd>
+      <dt>clear()</dt>
+      <dd>Clears the output of the console.</dd>
+    </dl>
+    <h2>Download / Fork</h2>
+    <p>Visit the <a href="http://github.com/evilmarty/consolejs">GitHub repository</a> to download the latest version. You are welcome to also fork the repo and do with as you wish. If you fix an issue please send a pull request and share the love <3</p>
+    <h2>Installation</h2>
+    <p><strong>console.js</strong> has no dependencies, so simply include the javascript file in your html:</p>
+    <pre>&lt;script type="text/javascript" src="console.js"&gt;&lt;/script&gt;</pre>
+    <p>And don't forget to include the stylesheet unless you want to provide your own?</p>
+    <pre>&lt;link rel="stylesheet" href="console.css" type="text/css" charset="utf-8"&gt;</pre>
+    <h2>A word if I may...</h2>
+    <p>The day I decided to make <strong>console.js</strong> I discovered, by coincidence, Joss Crowcroft's <a href="http://josscrowcroft.github.com/javascript-sandbox-console/" target="_blank">js sandbox console</a>. What I didn't like about it and why I continued with my own was that the dependencies were just too big for something so small. I wanted something independent and self-contained. No beef with Joss' console, he did a great job and, I think, is a great example of using <a href="http://documentcloud.github.com/backbone" target="_blank">Backbone</a> for those who are learning. I would like to thank Webkit, for which I borrowed the look and feel to use in my rendition.
+    <h2>TODO</h2>
+    <ul>
+      <li>More testing (especially IE *shudder*)</li>
+      <li>Improve object inspection</li>
+      <li>Profit???</li>
+    </ul>
+    <script src="console.min.js"></script>
+    <script>
+    var console = Console('console');
+    console.log('console.js is a console in the browser for you to use how you please');
+    console.log('give it a try!');
+    </script>
+  </body>
+</html>
