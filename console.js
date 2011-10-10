@@ -1,4 +1,4 @@
-/*
+/*!
 Copyright (C) 2011 by Marty Zalega
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -105,11 +105,8 @@ THE SOFTWARE.
           }
         }
         return obj;
-      case 'error':
-      case 'function':
-        return create('span', {'class': type}, text(result.toString()));
       default:
-        return create('span', {'class': type}, text(result));
+        return create('span', {'class': type}, text(result.toString()));
     }
   }
   
