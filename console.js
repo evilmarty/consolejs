@@ -135,27 +135,65 @@ THE SOFTWARE.
   }
   
   var Console = function(el, scope) {
+    if (typeof el == 'string')
+      el = document.getElementById(el);
+    
+    var console = consoles[el];
+    if (console) {
+      console.cd(scope);
+      return console;
+    }
+    else if (!(this instanceof Console)) {
+      if (!console)
+        console = new Console(el, scope);
+      return console;
+    }
+    consoles[el] = this;
+    
+    scope || (scope = window);
+    
     var limbo = create('div');
     while (node = el.childNodes[0])
       limbo.appendChild(node);
     
     var container      = create('div', {'class': 'console-container'}),
         inputContainer = create('p', {'class': 'console-input'}),
-        input          = create('textarea', {row: 1});
+        input          = create('textarea', {row: 1}),
+        original       = {className: el.className, tabIndex: el.tabIndex};
     inputContainer.appendChild(input);
     container.appendChild(inputContainer);
     addClass(el, 'console').appendChild(container);
     
-    var history = new History;
+    if (el.tabIndex < 0) el.tabIndex = 0;
+    listen(el, 'focus', function() {
+      input.focus();
+    });
     
-    function clear() {
-      var prev = inputContainer.previousSibling;
-      while (prev) {
-        var el = prev;
-        prev = el.previousSibling;
-        el.parentNode.removeChild(el);
+    var history = new History;
+    listen(input, 'keydown', function(event) {
+      switch (event.keyCode) {
+        case 13: // enter
+          event.preventDefault();
+          exec(this.value);
+          this.value = '';
+          return false;
+        case 38: // up
+          if (cmd = history.previous())
+            input.value = cmd;
+          event.preventDefault();
+          return false;
+        case 40: // down
+          if (cmd = history.next())
+            input.value = cmd;
+          else
+            input.value = '';
+          event.preventDefault();
+          return false;
       }
-    }
+    });
+    listen(input, 'blur', function() {
+      history.reset();
+    });
     
     function log(level) {
       var msg = arguments.length === 2 ? arguments[1] : Array.prototype.slice.call(arguments, 1);
@@ -184,95 +222,49 @@ THE SOFTWARE.
       history.push(command);
     }
     
-    listen(input, 'keydown', function(event) {
-      switch (event.keyCode) {
-        case 13: // enter
-          event.preventDefault();
-          exec(this.value);
-          this.value = '';
-          return false;
-        case 38: // up
-          if (cmd = history.previous())
-            input.value = cmd;
-          event.preventDefault();
-          return false;
-        case 40: // down
-          if (cmd = history.next())
-            input.value = cmd;
-          else
-            input.value = '';
-          event.preventDefault();
-          return false;
+    return extend(this, {
+      cd: function(s) {
+        scope = s;
+      },
+      log: function() {
+        var args = Array.prototype.slice.call(arguments);
+        args.unshift('info');
+        log.apply(this, args);
+      },
+      info: function() {
+        var args = Array.prototype.slice.call(arguments);
+        args.unshift('info');
+        log.apply(this, args);
+      },
+      warn: function() {
+        var args = Array.prototype.slice.call(arguments);
+        args.unshift('warn');
+        log.apply(this, args);
+      },
+      error: function() {
+        var args = Array.prototype.slice.call(arguments);
+        args.unshift('error');
+        log.apply(this, args);
+      },
+      clear: function() {
+        var prev = inputContainer.previousSibling;
+        while (prev) {
+          var el = prev;
+          prev = el.previousSibling;
+          el.parentNode.removeChild(el);
+        }
+      },
+      destroy: function() {
+        for (var k in original) el[k] = original[k];
+        while (node = el.childNodes[0]) el.removeChild(node);
+        while (node = limbo.childNodes[0]) el.appendChild(node);
+        delete limbo;
+        delete output;
+        delete input;
+        delete original;
       }
     });
-    listen(input, 'blur', function() {
-      history.reset();
-    });
-    
-    scope || (scope = window);
-    
-    var tabIndex = el.tabIndex;
-    if (el.tabIndex < 0)
-      el.tabIndex = 0;
-    listen(el, 'focus', function() {
-      input.focus();
-    });
-    
-    return new function() {
-      return extend(this, {
-        cd: function(s) {
-          scope = s;
-        },
-        log: function() {
-          var args = Array.prototype.slice.call(arguments);
-          args.unshift('info');
-          log.apply(this, args);
-        },
-        info: function() {
-          var args = Array.prototype.slice.call(arguments);
-          args.unshift('info');
-          log.apply(this, args);
-        },
-        warn: function() {
-          var args = Array.prototype.slice.call(arguments);
-          args.unshift('warn');
-          log.apply(this, args);
-        },
-        error: function() {
-          var args = Array.prototype.slice.call(arguments);
-          args.unshift('error');
-          log.apply(this, args);
-        },
-        clear: clear,
-        destroy: function() {
-          el.tabIndex = tabIndex;
-          while (node = el.childNodes[0])
-            el.removeChild(node);
-          while (node = limbo.childNodes[0])
-            el.appendChild(node);
-          delete limbo;
-          delete output;
-          delete input;
-          delete tabIndex;
-        }
-      });
-    }
   }
   
-  window.Console = function(el, scope) {
-    if (typeof el == 'string')
-      el = document.getElementById(el);
-    
-    var console = consoles[el];
-    if (this instanceof Console || !console) {
-      if (console) {
-        console.destroy();
-        delete console;
-      }
-      consoles[el] = console = new Console(el, scope);
-    }
-    else if (scope)
-      console.cd(scope);
-    return console;
-  }
+  window.Console = Console;
 })();
