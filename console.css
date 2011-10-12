@@ -6,12 +6,10 @@
 }
 .console * {
   border: 0;
+  font: normal 14px/1.3 Consolas,'Andale Mono','Courier New',Courier,monospace;
   margin: 0;
   outline: 0;
   padding: 0;
-}
-.console, .console textarea {
-  font: normal 14px/1.3 Consolas,'Andale Mono','Courier New',Courier,monospace;
 }
 .console textarea {
   background: transparent;
@@ -86,6 +84,44 @@
 }
 .console-container dl.object dd:last-child::after {
   content: none;
+}
+.console-container div.element div.open,
+.console-container div.element div.close {
+  color: #909;
+  display: inline;
+}
+.console-container div.element div.open::before {
+  content: '<';
+}
+.console-container div.element div.close::before {
+  content: '</';
+}
+.console-container div.element div.open::after,
+.console-container div.element div.close::after {
+  content: '>';
+}
+.console-container div.element div.content {
+  display: none;
+}
+.console-container div.element dl,
+.console-container div.element dt,
+.console-container div.element dd {
+  display: inline;
+}
+.console-container div.element dt {
+  color: #c00;
+  margin-left: 0.5em;
+}
+.console-container div.element dt::after {
+  content: '=';
+}
+.console-container div.element dd {
+  color: #00f;
+}
+.console-container div.element dd::before,
+.console-container div.element dd::after {
+  color: #c00;
+  content: '"';
 }
 .console-container p {
   padding-left: 15px;

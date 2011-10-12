@@ -71,6 +71,17 @@ THE SOFTWARE.
     return src;
   }
   
+  function toArray(arr) {
+    return Array.prototype.slice.call(arr);
+  }
+  
+  function bind(func, inst) {
+    var args = toArray(arguments).slice(2);
+    return function() {
+      func.apply(inst || this, args.concat(toArray(arguments)));
+    }
+  }
+  
   function typeOf(obj) {
     if (Object.prototype.toString.call(obj) === '[object Array]')
       return 'array';
@@ -78,6 +89,8 @@ THE SOFTWARE.
       return 'error';
     else if (obj === null)
       return 'null';
+    else if (obj && obj.nodeType == 1)
+      return 'element';
     else
       return typeof obj;
   }
@@ -105,6 +118,18 @@ THE SOFTWARE.
           }
         }
         return obj;
+      case 'element':
+        var nodeName = result.nodeName.toLowerCase(),
+            attrs = create('dl'),
+            open = create('div', {'class': 'open'}, text(nodeName), attrs),
+            close = create('div', {'class': 'close'}, text(nodeName)),
+            html = create('div', {'class': 'content'}, text(result.innerHTML));
+        for (var i = 0; i < result.attributes.length; ++i) {
+          var attr = result.attributes[i];
+          attrs.appendChild(create('dt', null, text(attr.name)));
+          attrs.appendChild(create('dd', null, text(attr.value)));
+        }
+        return create('div', {'class': type}, open, html, close);
       default:
         return create('span', {'class': type}, text(result.toString()));
     }
@@ -196,7 +221,7 @@ THE SOFTWARE.
     });
     
     function log(level) {
-      var msg = arguments.length === 2 ? arguments[1] : Array.prototype.slice.call(arguments, 1);
+      var msg = arguments.length === 2 ? arguments[1] : toArray(arguments).slice(1);
       
       var result = create('div', {'class': 'result'}, output(msg)),
           el = addClass(create('p', null, result), typeOf(msg), level);
@@ -227,25 +252,11 @@ THE SOFTWARE.
         scope = s;
       },
       log: function() {
-        var args = Array.prototype.slice.call(arguments);
-        args.unshift('info');
-        log.apply(this, args);
+        this.info.apply(this, arguments)
       },
-      info: function() {
-        var args = Array.prototype.slice.call(arguments);
-        args.unshift('info');
-        log.apply(this, args);
-      },
-      warn: function() {
-        var args = Array.prototype.slice.call(arguments);
-        args.unshift('warn');
-        log.apply(this, args);
-      },
-      error: function() {
-        var args = Array.prototype.slice.call(arguments);
-        args.unshift('error');
-        log.apply(this, args);
-      },
+      info: bind(log, this, 'info'),
+      warn: bind(log, this, 'warn'),
+      error: bind(log, this, 'error'),
       clear: function() {
         var prev = inputContainer.previousSibling;
         while (prev) {
