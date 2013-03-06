@@ -22,7 +22,7 @@ THE SOFTWARE.
 
 (function() {
   var consoles = {};
-  
+
   function create(tagName, attrs) {
     var el = document.createElement(tagName);
     if (attrs)
@@ -31,14 +31,14 @@ THE SOFTWARE.
       el.appendChild(arguments[i]);
     return el;
   }
-  
+
   function text(el, text) {
     if (typeof el === 'string' || typeof el === 'number')
       return document.createTextNode(el);
     el.appendChild(document.createTextNode(text));
     return el;
   }
-  
+
   function addClass(el) {
     var classes = [];
     for (var i = 1; i < arguments.length; ++i)
@@ -47,12 +47,12 @@ THE SOFTWARE.
       for (var i in classes) el.classList.add(classes[i]);
     }
     else {
-      classes = el.className.split(/\s+/) + classes;
+      classes = el.className.split(/\s+/).concat(classes);
       el.className = classes.join(' ');
     }
     return el;
   }
-  
+
   function listen(el, event, callback) {
     var onevent = 'on' + event;
     if (el.addEventListener)
@@ -62,7 +62,7 @@ THE SOFTWARE.
     else if (onevent in el)
       return el[onevent] = callback;
   }
-  
+
   function extend(src) {
     for (var i = 1; i < arguments.length; ++i) {
       var obj = arguments[i];
@@ -70,18 +70,18 @@ THE SOFTWARE.
     }
     return src;
   }
-  
+
   function toArray(arr) {
     return Array.prototype.slice.call(arr);
   }
-  
+
   function bind(func, inst) {
     var args = toArray(arguments).slice(2);
     return function() {
       func.apply(inst || this, args.concat(toArray(arguments)));
     }
   }
-  
+
   function typeOf(obj) {
     if (Object.prototype.toString.call(obj) === '[object Array]')
       return 'array';
@@ -94,7 +94,7 @@ THE SOFTWARE.
     else
       return typeof obj;
   }
-  
+
   function output(result, deep) {
     var type = typeOf(result);
     switch (type) {
@@ -134,7 +134,7 @@ THE SOFTWARE.
         return create('span', {'class': type}, text(result.toString()));
     }
   }
-  
+
   var History = function() {
     var index = -1, history = [];
     return extend(this, {
@@ -158,11 +158,11 @@ THE SOFTWARE.
       }
     });
   }
-  
+
   var Console = function(el, scope) {
     if (typeof el == 'string')
       el = document.getElementById(el);
-    
+
     var console = consoles[el];
     if (console) {
       console.cd(scope);
@@ -174,13 +174,13 @@ THE SOFTWARE.
       return console;
     }
     consoles[el] = this;
-    
+
     scope || (scope = window);
-    
+
     var limbo = create('div');
     while (node = el.childNodes[0])
       limbo.appendChild(node);
-    
+
     var container      = create('div', {'class': 'console-container'}),
         inputContainer = create('p', {'class': 'console-input'}),
         input          = create('textarea', {row: 1}),
@@ -188,12 +188,12 @@ THE SOFTWARE.
     inputContainer.appendChild(input);
     container.appendChild(inputContainer);
     addClass(el, 'console').appendChild(container);
-    
+
     if (el.tabIndex < 0) el.tabIndex = 0;
     listen(el, 'focus', function() {
       input.focus();
     });
-    
+
     var history = new History;
     listen(input, 'keydown', function(event) {
       switch (event.keyCode) {
@@ -219,19 +219,19 @@ THE SOFTWARE.
     listen(input, 'blur', function() {
       history.reset();
     });
-    
+
     function log(level) {
       var msg = arguments.length === 2 ? arguments[1] : toArray(arguments).slice(1);
-      
+
       var result = create('div', {'class': 'result'}, output(msg)),
           el = addClass(create('p', null, result), typeOf(msg), level);
       container.insertBefore(el, inputContainer);
       return el;
     }
-    
+
     function exec(command) {
       if (!command) return;
-      
+
       var cmd = text(create('div', {'class': 'command'}), command),
           level = 'info', msg;
       try {
@@ -246,7 +246,7 @@ THE SOFTWARE.
       container.scrollTop = container.scrollHeight;
       history.push(command);
     }
-    
+
     return extend(this, {
       cd: function(s) {
         scope = s;
@@ -276,6 +276,6 @@ THE SOFTWARE.
       }
     });
   }
-  
+
   window.Console = Console;
 })();
