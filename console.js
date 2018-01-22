@@ -257,6 +257,7 @@ THE SOFTWARE.
       info: bind(log, this, 'info'),
       warn: bind(log, this, 'warn'),
       error: bind(log, this, 'error'),
+      debug: bind(log, this, 'debug'),
       clear: function() {
         var prev = inputContainer.previousSibling;
         while (prev) {
